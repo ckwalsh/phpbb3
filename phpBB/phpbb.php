@@ -13,7 +13,7 @@ $phpEx = substr(strrchr(__FILE__, '.'), 1);
 require($phpbb_root_path . 'includes/cli/cli.' . $phpEx);
 
 $args = $argv;
-array_shift($args); // Off with ./phpbb.php
+array_shift($args); // Off with phpbb.php
 $task = array_shift($args);
 
 $cli = new phpbb_cli($task, $args);

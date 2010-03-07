@@ -19,7 +19,9 @@ class phpbb_cli_task_foo extends phpbb_cli_task
 	
 	public function _run()
 	{
-		echo("Hello, World!\n");
+		$name = $this->attr->get('name', 'Bob');
+		
+		echo("Hello, $name!\n");
 		
 		return 0;
 	}

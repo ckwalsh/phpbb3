@@ -1,16 +1,29 @@
 <?php
 
+if (!defined('IN_PHPBB')) exit;
+
+require_once($phpbb_root_path . 'includes/cli/cli_task.php');
+
 class phpbb_cli
 {
 
-	private $tasks = array();
+	private $task = null;
 	private $args = array();
+
+	private $attr_reader = null;
 
 	public function __construct($task, $args)
 	{
+		$this->attr_reader = new phpbb_cli_attr_reader(array());
+		
 		$task = $this->sanitize_task($task);
-		$this->tasks[] = array($task, $this->find_task($task));
+		$this->task = $this->find_task($task);
 		$this->args = $args;
+	}
+
+	public function run()
+	{
+		return $this->task->run();
 	}
 
 	public function find_task($task)
@@ -34,67 +47,15 @@ class phpbb_cli
 			array_pop($task_parts);
 		}
 		
-		if (class_exists($class)) return new $class();
 
-		return false;
-	}
-
-	public function run()
-	{
-		$complete = array();
-
-		while (!empty($this->tasks))
+		if (class_exists($class))
 		{
-			$task_s = array_pop($this->tasks);
-
-			if(!$task_s[1])
-			{
-				return $this->task_not_found($task_s[0]);
-			}
-
-			if(isset($complete[$task_s[0]]))
-			{
-				continue;
-			}
-
-			if (!empty($task_s[1]->dependencies))
-			{
-				$unsatisfied = array();
-				foreach ($task_s[1]->dependencies as $dep)
-				{
-					if (!isset($complete[$dep]))
-					{
-						$unsatisfied[] = $dep;
-					}
-				}
-
-				if(!empty($unsatisfied))
-				{
-					$this->tasks[] = $task_s;
-					foreach($unsatisfied as $dep)
-					{
-						$this->tasks[] = array($dep, $this->find_task($dep));
-					}
-				}
-
-				continue;
-			}
-
-			if($code = $task_s[1]->run())
-			{
-				return $this->display_errors($code, $task_s[1]->errors);
-			}
-			else
-			{
-				$complete[$task_s[0]] = $task_s[1];
-			}
+			return phpbb_cli_task::construct($class, $this->attr_reader);
 		}
 
-		// Completed without errors
-
-		return 0;
+		return $this->task_not_found($task);
 	}
-
+		
 	public function task_not_found($task)
 	{
 		trigger_error("Task '$task' not found", E_USER_ERROR);
@@ -116,3 +77,58 @@ class phpbb_cli
 		return preg_replace('/[^a-z:]+/', '', strtolower($task));
 	}
 }
+
+class phpbb_cli_attr_reader implements phpbb_attr_reader
+{
+
+	private $properties = array();
+
+	public function __construct($properties)
+	{
+		$this->properties = $properties;
+	}
+	
+	public function get($var, $default, $lang = false)
+	{
+		$ret = null;
+		if(isset($this->properties[$var]))
+		{
+			$ret = $this->properties[$var];
+		}
+		else
+		{
+			// Get it from standard in
+			$lang_s = ($lang === false) ? $var : $default;
+			$lang_s .= "? ($default) ";
+			echo($lang_s);
+		
+			$fp = fopen('php://stdin', 'r');
+			$ret = substr(fgets($fp), 0, -1);
+			fclose($fp);
+
+			if(empty($ret))
+			{
+				$ret = $default;
+			}
+		}
+		
+		if(is_bool($default))
+		{
+			$ret = (bool) $defult;
+		}
+		else if(is_int($default))
+		{
+			$ret = (int) $ret;
+		}
+		else if (is_float($default))
+		{
+			$ret = (float) $ret;
+		}
+		else
+		{
+			$ret = (string) $ret;
+		}
+
+		return $ret;
+	}
+}	
