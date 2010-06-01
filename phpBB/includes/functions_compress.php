@@ -123,7 +123,7 @@ class compress
 	function methods()
 	{
 		$methods = array('.tar');
-		$available_methods = array('.tar.gz' => 'zlib', '.tar.bz2' => 'bz2', '.zip' => 'zlib');
+		$available_methods = array('.tar.gz' => 'zlib', '.zip' => 'zlib');
 
 		foreach ($available_methods as $type => $module)
 		{
@@ -302,7 +302,7 @@ class compress_zip extends compress
 
 						case 12:
 							// Bzip2
-							fwrite($fp, bzdecompress($content));
+							//fwrite($fp, bzdecompress($content));
 						break;
 					}
 
@@ -503,7 +503,7 @@ class compress_tar extends compress
 	{
 		$type = (!$type) ? $file : $type;
 		$this->isgz = preg_match('#(\.tar\.gz|\.tgz)$#', $type);
-		$this->isbz = preg_match('#\.tar\.bz2$#', $type);
+		//$this->isbz = preg_match('#\.tar\.bz2$#', $type);
 
 		$this->mode = &$mode;
 		$this->file = &$file;
@@ -705,9 +705,11 @@ class compress_tar extends compress
 				$mimetype = 'application/x-gzip';
 			break;
 
+      /*
 			case '.tar.bz2':
 				$mimetype = 'application/x-bzip2';
 			break;
+      */
 
 			default:
 				$mimetype = 'application/octet-stream';

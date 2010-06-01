@@ -308,7 +308,10 @@ class ftp extends transfer
 	*/
 	function _init()
 	{
-		// connect to the server
+		return 'ERR_CONNECTING_SERVER';
+		
+    /*
+    // connect to the server
 		$this->connection = @ftp_connect($this->host, $this->port, $this->timeout);
 
 		if (!$this->connection)
@@ -332,6 +335,7 @@ class ftp extends transfer
 		}
 
 		return true;
+    */
 	}
 
 	/**
@@ -340,7 +344,8 @@ class ftp extends transfer
 	*/
 	function _mkdir($dir)
 	{
-		return @ftp_mkdir($this->connection, $dir);
+    return false;
+		//return @ftp_mkdir($this->connection, $dir);
 	}
 
 	/**
@@ -349,7 +354,8 @@ class ftp extends transfer
 	*/
 	function _rmdir($dir)
 	{
-		return @ftp_rmdir($this->connection, $dir);
+		return false;
+    //return @ftp_rmdir($this->connection, $dir);
 	}
 
 	/**
@@ -358,7 +364,8 @@ class ftp extends transfer
 	*/
 	function _rename($old_handle, $new_handle)
 	{
-		return @ftp_rename($this->connection, $old_handle, $new_handle);
+		return false;
+    //return @ftp_rename($this->connection, $old_handle, $new_handle);
 	}
 
 	/**
@@ -367,6 +374,8 @@ class ftp extends transfer
 	*/
 	function _chdir($dir = '')
 	{
+    return false;
+    /*
 		if ($dir && $dir !== '/')
 		{
 			if (substr($dir, -1, 1) == '/')
@@ -376,6 +385,7 @@ class ftp extends transfer
 		}
 
 		return @ftp_chdir($this->connection, $dir);
+    */
 	}
 
 	/**
@@ -384,6 +394,8 @@ class ftp extends transfer
 	*/
 	function _chmod($file, $perms)
 	{
+    return false;
+    /*
 		if (function_exists('ftp_chmod'))
 		{
 			$err = @ftp_chmod($this->connection, $perms, $file);
@@ -397,6 +409,7 @@ class ftp extends transfer
 		}
 
 		return $err;
+    */
 	}
 
 	/**
@@ -405,6 +418,8 @@ class ftp extends transfer
 	*/
 	function _put($from_file, $to_file)
 	{
+    return false;
+    /*
 		// get the file extension
 		$file_extension = strtolower(substr(strrchr($to_file, '.'), 1));
 
@@ -419,6 +434,7 @@ class ftp extends transfer
 		$this->_chdir($this->root_path);
 
 		return $result;
+    */
 	}
 
 	/**
@@ -427,7 +443,8 @@ class ftp extends transfer
 	*/
 	function _delete($file)
 	{
-		return @ftp_delete($this->connection, $file);
+    return false;
+		//return @ftp_delete($this->connection, $file);
 	}
 
 	/**
@@ -436,12 +453,15 @@ class ftp extends transfer
 	*/
 	function _close()
 	{
+    return false;
+    /*
 		if (!$this->connection)
 		{
 			return false;
 		}
 
 		return @ftp_quit($this->connection);
+    */
 	}
 
 	/**
@@ -451,7 +471,8 @@ class ftp extends transfer
 	*/
 	function _cwd()
 	{
-		return @ftp_pwd($this->connection);
+    return false;
+		//return @ftp_pwd($this->connection);
 	}
 
 	/**
@@ -460,6 +481,8 @@ class ftp extends transfer
 	*/
 	function _ls($dir = './')
 	{
+    return false;
+    /*
 		$list = @ftp_nlist($this->connection, $dir);
 
 		// See bug #46295 - Some FTP daemons don't like './'
@@ -492,6 +515,7 @@ class ftp extends transfer
 		}
 
 		return $list;
+    */
 	}
 
 	/**
@@ -500,7 +524,8 @@ class ftp extends transfer
 	*/
 	function _site($command)
 	{
-		return @ftp_site($this->connection, $command);
+		return false;
+    //return @ftp_site($this->connection, $command);
 	}
 }
 

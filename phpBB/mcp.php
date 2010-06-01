@@ -278,16 +278,17 @@ function _module_notes_url($mode, &$module_row)
 
 function _module_warn_url($mode, &$module_row)
 {
+	global $forum_id;
+	global $post_id;
+	global $user_id;
+
 	if ($mode == 'front' || $mode == 'list')
 	{
-		global $forum_id;
-
 		return ($forum_id) ? "&amp;f=$forum_id" : '';
 	}
 
 	if ($mode == 'warn_post')
 	{
-		global $forum_id, $post_id;
 
 		$url_extra = ($forum_id) ? "&amp;f=$forum_id" : '';
 		$url_extra .= ($post_id) ? "&amp;p=$post_id" : '';
@@ -296,7 +297,6 @@ function _module_warn_url($mode, &$module_row)
 	}
 	else
 	{
-		global $user_id;
 
 		return ($user_id) ? "&amp;u=$user_id" : '';
 	}

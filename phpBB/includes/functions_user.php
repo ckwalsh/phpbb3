@@ -3446,6 +3446,7 @@ function group_memberships($group_id_ary = false, $user_id_ary = false, $return_
 function group_update_listings($group_id)
 {
 	global $auth;
+	global $phpbb_root_path, $phpEx;
 
 	$hold_ary = $auth->acl_group_raw_data($group_id, array('a_', 'm_'));
 
@@ -3489,7 +3490,6 @@ function group_update_listings($group_id)
 	{
 		if (!function_exists('cache_moderators'))
 		{
-			global $phpbb_root_path, $phpEx;
 			include($phpbb_root_path . 'includes/functions_admin.' . $phpEx);
 		}
 		cache_moderators();
@@ -3499,7 +3499,6 @@ function group_update_listings($group_id)
 	{
 		if (!function_exists('update_foes'))
 		{
-			global $phpbb_root_path, $phpEx;
 			include($phpbb_root_path . 'includes/functions_admin.' . $phpEx);
 		}
 		update_foes(array($group_id));

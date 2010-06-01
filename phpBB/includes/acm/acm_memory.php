@@ -37,21 +37,18 @@ class acm_memory
 	function acm_memory()
 	{
 		global $phpbb_root_path, $dbname, $table_prefix;
+		global $acm_type;
 
 		$this->cache_dir	= $phpbb_root_path . 'cache/';
 		$this->key_prefix	= substr(md5($dbname . $table_prefix), 0, 8) . '_';
 
 		if (!isset($this->extension) || !extension_loaded($this->extension))
 		{
-			global $acm_type;
-
 			trigger_error("Could not find required extension [{$this->extension}] for the ACM module $acm_type.", E_USER_ERROR);
 		}
 
 		if (isset($this->function) && !function_exists($this->function))
 		{
-			global $acm_type;
-
 			trigger_error("The required function [{$this->function}] is not available for the ACM module $acm_type.", E_USER_ERROR);
 		}
 	}

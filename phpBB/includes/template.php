@@ -227,7 +227,10 @@ class template
 		}
 		else
 		{
-			eval(' ?>' . $this->compiled_code[$handle] . '<?php ');
+			die("Error: template file missing.  Must recompile HipHop");
+      /*
+      eval(' ?>' . $this->compiled_code[$handle] . '<?php ');
+      */
 		}
 
 		return true;
@@ -665,7 +668,10 @@ class template
 				include($filename);
 				return;
 			}
-			eval(' ?>' . $this->compiled_code[$handle] . '<?php ');
+			die("Error: template file missing.  Must recompile HipHop");
+			/*
+      eval(' ?>' . $this->compiled_code[$handle] . '<?php ');
+      */
 		}
 	}
 

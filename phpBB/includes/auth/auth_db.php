@@ -27,6 +27,7 @@ if (!defined('IN_PHPBB'))
 function login_db(&$username, &$password)
 {
 	global $db, $config;
+	global $phpbb_root_path, $phpEx;
 
 	// do not allow empty password
 	if (!$password)
@@ -71,7 +72,6 @@ function login_db(&$username, &$password)
 		// Visual Confirmation handling
 		if (!class_exists('phpbb_captcha_factory'))
 		{
-			global $phpbb_root_path, $phpEx;
 			include ($phpbb_root_path . 'includes/captcha/captcha_factory.' . $phpEx);
 		}
 
@@ -107,7 +107,6 @@ function login_db(&$username, &$password)
 		{
 			if (!function_exists('utf8_to_cp1252'))
 			{
-				global $phpbb_root_path, $phpEx;
 				include($phpbb_root_path . 'includes/utf/data/recode_basic.' . $phpEx);
 			}
 

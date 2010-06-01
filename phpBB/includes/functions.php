@@ -1052,19 +1052,6 @@ function phpbb_own_realpath($path)
 	return $resolved; // We got here, in the end!
 }
 
-if (!function_exists('realpath'))
-{
-	/**
-	* A wrapper for realpath
-	* @ignore
-	*/
-	function phpbb_realpath($path)
-	{
-		return phpbb_own_realpath($path);
-	}
-}
-else
-{
 	/**
 	* A wrapper for realpath
 	*/
@@ -1087,7 +1074,6 @@ else
 
 		return $realpath;
 	}
-}
 
 if (!function_exists('htmlspecialchars_decode'))
 {

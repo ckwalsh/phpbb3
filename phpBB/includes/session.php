@@ -2030,11 +2030,11 @@ class user extends session
 	function set_lang(&$lang, &$help, $lang_file, $use_db = false, $use_help = false)
 	{
 		global $phpEx;
+		global $config;
 
 		// Make sure the language name is set (if the user setup did not happen it is not set)
 		if (!$this->lang_name)
 		{
-			global $config;
 			$this->lang_name = basename($config['default_lang']);
 		}
 
@@ -2054,8 +2054,6 @@ class user extends session
 
 			if (!file_exists($language_filename))
 			{
-				global $config;
-
 				if ($this->lang_name == 'en')
 				{
 					// The user's selected language is missing the file, the board default's language is missing the file, and the file doesn't exist in /en.
