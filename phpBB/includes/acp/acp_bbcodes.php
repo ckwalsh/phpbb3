@@ -471,6 +471,11 @@ class acp_bbcodes
 			'second_pass_replace'		=> $sp_replace
 		);
 	}
+
+  static function preg_replace_backreference_callback($match)
+  {
+    
+  }
 }
 
 ?>

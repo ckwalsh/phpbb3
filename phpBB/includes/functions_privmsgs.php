@@ -259,17 +259,48 @@ function check_rule(&$rules, &$rule_row, &$message_row, $user_id)
 	}
 
 	$check_ary = $rules[$rule_row['rule_check']][$rule_row['rule_connection']];
+  
+  $result = false;
 
-	// Replace Check Literals
-	$evaluate = $check_ary['function'];
-	$evaluate = preg_replace('/{(CHECK[0-9])}/', '$message_row[$check_ary[strtolower("\1")]]', $evaluate);
-
-	// Replace Rule Literals
-	$evaluate = preg_replace('/{(STRING|USER_ID|GROUP_ID)}/', '$rule_row["rule_" . strtolower("\1")]', $evaluate);
-
-	// Evil Statement
-	$result = false;
-	eval('$result = (' . $evaluate . ') ? true : false;');
+  switch($rule_row['rule_check'])
+  {
+    case RULE_IS_LIKE:
+      $result = preg_match("/" . preg_quote($rule_row['rule_string'], '/') . '/i', $check_ary['check0']);
+      break;
+    case RULE_IS_NOT_LIKE:
+      $result = !preg_match("/" . preg_quote($rule_row['rule_string'], '/') . '/i', $check_ary['check0']);
+      break;
+    case RULE_IS:
+      $result = ($check_ary['check0'] == $rule_row['rule_string']);
+      break;
+    case RULE_IS_NOT:
+      $result = ($check_ary['check0'] != $rule_row['rule_string']);
+      break;
+    case RULE_BEGINS_WITH:
+      $result = preg_match("/^" . preg_quote($rule_row['rule_string'], '/') . '/i', $check_ary['check0']);
+      break;
+    case RULE_ENDS_WITH:
+      $result = preg_match("/" . preg_quote($rule_row['rule_string'], '/') . '$/i', $check_ary['check0']);
+      break;
+    case RULE_IS_FRIEND:
+    case RULE_IS_FOE:
+    case RULE_ANSWERED:
+    case RULE_FORWARDED:
+      $result = ($check_ary['check0'] == 1);
+      break;
+    case RULE_IS_USER:
+      $result = ($check_ary['check0'] == $rule_row['rule_user_id']);
+      break;
+    case RULE_IS_GROUP:
+      $result = in_array($rule_row['rule_group_id'], $check_ary['check0']);
+      break;
+    case RULE_TO_GROUP:
+      $result = (in_array('g_' . $check_ary['check2'], $check_ary['check0']) || in_array('g_' . $check_arry['check2'], $check_ary['check1']));
+      break;
+    case RULE_TO_ME:
+      $result = (in_array('u_' . $user_id, $check_ary['check0']) || in_array('u_' . $user_id, $check_ary['check0']));
+      break;
+  }
 
 	if (!$result)
 	{

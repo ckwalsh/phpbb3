@@ -227,7 +227,8 @@ class template
 		}
 		else
 		{
-			die("Error: template file missing.  Must recompile HipHop");
+			
+      if (!defined('HIPHOP_TPL_GEN')) die("Error: template file missing.  Must recompile HipHop");
       /*
       eval(' ?>' . $this->compiled_code[$handle] . '<?php ');
       */
@@ -668,7 +669,8 @@ class template
 				include($filename);
 				return;
 			}
-			die("Error: template file missing.  Must recompile HipHop");
+
+      if (!defined('HIPHOP_TPL_GEN')) die("Error: template file missing.  Must recompile HipHop");
 			/*
       eval(' ?>' . $this->compiled_code[$handle] . '<?php ');
       */

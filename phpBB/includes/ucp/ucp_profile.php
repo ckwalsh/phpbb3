@@ -241,7 +241,19 @@ class ucp_profile
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+          $lang_error = array();
+          foreach($error as $e)
+          {
+            if (!empty($user->lang[$e]))
+            {
+              $lang_error[] = $user->lang[$e];
+            }
+            else
+            {
+              $lang_error[] = $e;
+            }
+          }
+          $error  = $lang_error;
 				}
 
 				$template->assign_vars(array(
@@ -388,7 +400,19 @@ class ucp_profile
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+          $lang_error = array();
+          foreach($error as $e)
+          {
+            if (!empty($user->lang[$e]))
+            {
+              $lang_error[] = $user->lang[$e];
+            }
+            else
+            {
+              $lang_error[] = $e;
+            }
+          }
+          $error  = $lang_error;
 				}
 
 				if ($config['allow_birthdays'])
@@ -513,7 +537,19 @@ class ucp_profile
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+          $lang_error = array();
+          foreach($error as $e)
+          {
+            if (!empty($user->lang[$e]))
+            {
+              $lang_error[] = $user->lang[$e];
+            }
+            else
+            {
+              $lang_error[] = $e;
+            }
+          }
+          $error  = $lang_error;
 				}
 
 				$signature_preview = '';
@@ -584,7 +620,19 @@ class ucp_profile
 						$error[] = 'FORM_INVALID';
 					}
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+          $lang_error = array();
+          foreach($error as $e)
+          {
+            if (!empty($user->lang[$e]))
+            {
+              $lang_error[] = $user->lang[$e];
+            }
+            else
+            {
+              $lang_error[] = $e;
+            }
+          }
+          $error  = $lang_error;
 				}
 
 				if (!$config['allow_avatar'] && $user->data['user_avatar_type'])

@@ -360,9 +360,153 @@ class p_master
 
 		$forum_id = ($forum_id === false) ? $this->acl_forum_id : $forum_id;
 
-		$is_auth = false;
-		eval('$is_auth = (int) (' . preg_replace(array('#acl_([a-z0-9_]+)(,\$id)?#', '#\$id#', '#aclf_([a-z0-9_]+)#', '#cfg_([a-z0-9_]+)#', '#request_([a-zA-Z0-9_]+)#'), array('(int) $auth->acl_get(\'\\1\'\\2)', '(int) $forum_id', '(int) $auth->acl_getf_global(\'\\1\')', '(int) $config[\'\\1\']', '!empty($_REQUEST[\'\\1\'])'), $module_auth) . ');');
+		$tokens = array();
+		preg_match_all('#!|[a-z0-9_,\$]+|&&|\(|\)|\|\|#', $module_auth, $tokens);
+		$tokens = $tokens[0];
 
+		$evaled = array();
+
+		foreach($tokens as $token)
+		{
+			$sub = substr($token, 0, 4);
+			if ($sub == 'acl_')
+			{
+				$parts = explode(',');
+				if (sizeof($parts) == 2)
+				{
+					$token = (int) $auth->acl_get($parts[0], $forum_id);
+				}
+				else
+				{
+					$token = (int) $auth->acl_get($parts[0]);
+				}
+			}
+			else if ($sub == 'aclf')
+			{
+				$token = (int) $auth->acl_getf_global($token);
+			}
+			else if ($sub == 'cfg_')
+			{
+				$token = (int) $config[$token];
+			}
+			else if ($sub == 'requ')
+			{
+				$token = !empty($_REQUEST[$token]);
+			}
+			else if ($sub == '$id')
+			{
+				$token = $forum_id;
+			}
+
+			$evaled[] = $token;
+		}
+
+		$ops = array();
+		$vars = array();
+
+		for($i = 0, $size = sizeof($evaled); $i < $size; ++$i)
+		{
+			$token = $evaled[$i];
+			
+			if ($token == '!')
+			{
+				++$i;
+				$token = !$evaled[$i];
+			}
+			
+			if ($token == '(' || $token == '&&')
+			{
+				$ops[] = $token;
+			}
+			else if ($token == ')')
+			{
+				while (!empty($ops))
+				{
+					$last = end($ops);
+					if ($last == '&&')
+					{
+						$v = array_pop($vars) && array_pop($vars);
+						$vars[] = $v;
+						array_pop($ops);
+					}
+					else if ($last == '||')
+					{
+						$v = array_pop($vars) || array_pop($vars);
+						$vars[] = $v;
+						array_pop($ops);
+					}
+					else if ($last == ')')
+					{
+						array_pop($ops);
+						break;
+					}
+				}
+			}
+			else if ($token == '||')
+			{
+				while (!empty($ops))
+				{
+					$last = end($ops);
+					if ($last == '&&')
+					{
+						$v = array_pop($vars) && array_pop($vars);
+						$vars[] = $v;
+						array_pop($ops);
+					}
+					else if ($last == '(')
+					{
+						break;
+					}
+				}
+				
+				$ops[] = $token;
+			}
+			else
+			{
+				$vars[] = $token;
+			}
+		}
+
+		while (!empty($ops))
+		{
+			$op = array_pop($ops);
+			if ($op == '&&')
+			{
+				$v = array_pop($vars) && array_pop($vars);
+				$vars[] = $v;
+			}
+			else if ($op == '||')
+			{
+				$v = array_pop($vars) && array_pop($vars);
+				$vars[] = $v;
+			}
+			else
+			{
+				trigger_error("Cullen fails at parsing");
+			}
+		}
+
+		if (sizeof($vars) != 1)
+		{
+			trigger_error("Cullen fails at parsing");
+		}
+
+		$is_auth = $vars[0];
+/*
+		eval('$is_auth = (int) (' . preg_replace(array(
+			'#acl_([a-z0-9_]+)(,\$id)?#',
+			'#\$id#',
+			'#aclf_([a-z0-9_]+)#',
+			'#cfg_([a-z0-9_]+)#',
+			'#request_([a-zA-Z0-9_]+)#'
+		), array(
+			'(int) $auth->acl_get(\'\\1\'\\2)',
+			'(int) $forum_id',
+			'(int) $auth->acl_getf_global(\'\\1\')',
+			'(int) $config[\'\\1\']',
+			'!empty($_REQUEST[\'\\1\'])'
+		), $module_auth) . ');');
+*/
 		return $is_auth;
 	}
 
