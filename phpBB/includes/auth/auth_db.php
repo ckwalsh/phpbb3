@@ -24,7 +24,7 @@ if (!defined('IN_PHPBB'))
 /**
 * Login function
 */
-function login_db(&$username, &$password)
+function login_db($username, $password)
 {
 	global $db, $config;
 	global $phpbb_root_path, $phpEx;
