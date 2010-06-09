@@ -896,9 +896,22 @@ class auth
 		include_once($phpbb_root_path . 'includes/auth/auth_' . $method . '.' . $phpEx);
 
 		$method = 'login_' . $method;
-		//if (function_exists($method))
-		//{
-			$login = login_db($username, $password);
+		if (function_exists($method))
+		{
+      switch ($method)
+      {
+        case 'login_db':
+          $login = login_db($username, $password);
+          break;
+        case 'login_apache':
+          $login = login_apache($username, $password);
+          break;
+        case 'login_ldap':
+          $login = login_ldap($username, $password);
+          break;
+        default:
+          $login = $method($username, $password);
+      }
 
 			// If the auth module wants us to create an empty profile do so and then treat the status as LOGIN_SUCCESS
 			if ($login['status'] == LOGIN_SUCCESS_CREATE_PROFILE)
@@ -982,9 +995,9 @@ class auth
 			}
 
 			return $login;
-		//}
+		}
 
-		//trigger_error('Authentication method not found', E_USER_ERROR);
+		trigger_error('Authentication method not found', E_USER_ERROR);
 	}
 
 	/**
