@@ -494,7 +494,7 @@ if (($config['email_enable'] || $config['jab_enable']) && $config['allow_topic_n
 	if ($config['allow_forum_notify'] && $auth->acl_get('f_subscribe', $forum_id))
 	{
 		$s_watching_forum = $s_watching_topic;
-		watch_topic_forum('forum', $s_watching_forum, $user->data['user_id'], $forum_id, 0);
+		watch_topic_forum('forum', $s_watching_forum, $user->data['user_id'], $forum_id, 0, 'unset', $start);
 	}
 }
 
