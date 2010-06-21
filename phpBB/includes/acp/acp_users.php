@@ -924,7 +924,7 @@ class acp_users
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'acp_users_preg_replace_lang_callback', $error);
 				}
 
 				if ($user_id == $user->data['user_id'])
@@ -1408,7 +1408,7 @@ class acp_users
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'acp_users_preg_replace_lang_callback', $error);
 				}
 
 				$s_birthday_day_options = '<option value="0"' . ((!$data['bday_day']) ? ' selected="selected"' : '') . '>--</option>';
@@ -1591,7 +1591,7 @@ class acp_users
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'acp_users_preg_replace_lang_callback', $error);
 				}
 
 				$dateformat_options = '';
@@ -1717,7 +1717,7 @@ class acp_users
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'acp_users_preg_replace_lang_callback', $error);
 				}
 
 				if (!$config['allow_avatar'] && $user_row['user_avatar_type'])
@@ -1860,7 +1860,7 @@ class acp_users
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'acp_users_preg_replace_lang_callback', $error);
 				}
 
 				$signature_preview = '';
@@ -2389,6 +2389,13 @@ class acp_users
 
 		$var = ($data) ? $data : $user_row['user_options'];
 		return ($var & 1 << $user->keyoptions[$key]) ? true : false;
+	}
+
+	function acp_users_preg_replace_lang_callback($match)
+	{
+		global $user;
+
+		return (!empty($user->lang[$match[1]])) ? $user->lang[$match[1]] : $match[1];
 	}
 }
 
