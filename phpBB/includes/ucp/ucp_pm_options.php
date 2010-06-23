@@ -487,7 +487,23 @@ function message_options($id, $mode, $global_privmsgs_rules, $global_rule_condit
 	$rule_lang = $action_lang = $check_lang = array();
 
 	// Build all three language arrays
-	preg_replace('#^((RULE|ACTION|CHECK)_([A-Z0-9_]+))$#e', "\${strtolower('\\2') . '_lang'}[constant('\\1')] = \$user->lang['PM_\\2']['\\3']", array_keys(get_defined_constants()));
+	$constants = get_defined_constants();
+	foreach($constants as $key => $val)
+	{
+		$parts = explode('_', $key, 2);
+		if ($parts[0] == 'RULE')
+		{
+			$rule_lang[$val] = $user->lang['PM_RULE'][$parts[1]];
+		}
+		else if($parts[0] == 'CHECK')
+		{
+			$check_lang[$val] = $user->lang['PM_CHECK'][$parts[1]];
+		}
+		else if ($parts[0] == 'ACTION')
+		{
+			$action_lang[$val] = $user->lang['PM_ACTION'][$parts[1]];
+		}
+  }
 
 	/*
 		Rule Ordering:
