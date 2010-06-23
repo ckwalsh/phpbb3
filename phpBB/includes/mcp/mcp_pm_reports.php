@@ -23,6 +23,7 @@ if (!defined('IN_PHPBB'))
 */
 class mcp_pm_reports
 {
+	var $tpl_name;
 	var $p_master;
 	var $u_action;
 

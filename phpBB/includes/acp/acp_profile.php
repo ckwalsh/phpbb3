@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_profile
 {
+	var $tpl_name;
 	var $u_action;
 
 	var $edit_lang_id;

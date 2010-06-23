@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_permissions
 {
+	var $tpl_name;
 	var $u_action;
 	var $permission_dropdown;
 

@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_ranks
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)

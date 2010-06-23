@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_language
 {
+	var $tpl_name;
 	var $u_action;
 	var $main_files;
 	var $language_header = '';

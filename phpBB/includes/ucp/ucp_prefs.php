@@ -23,6 +23,7 @@ if (!defined('IN_PHPBB'))
 */
 class ucp_prefs
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)
@@ -105,7 +106,7 @@ class ucp_prefs
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'ucp_prefs_preg_replace_lang_callback', $error);
 				}
 
 				$dateformat_options = '';
@@ -227,7 +228,7 @@ class ucp_prefs
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'ucp_prefs_preg_replace_lang_callback', $error);
 				}
 
 				$sort_dir_text = array('a' => $user->lang['ASCENDING'], 'd' => $user->lang['DESCENDING']);
@@ -352,6 +353,13 @@ class ucp_prefs
 		$this->tpl_name = 'ucp_prefs_' . $mode;
 		$this->page_title = 'UCP_PREFS_' . strtoupper($mode);
 	}
+}
+
+function ucp_prefs_preg_replace_lang_callback($match)
+{
+	global $user;
+
+	return (!empty($user->lang[$match[1]])) ? $user->lang[$match[1]] : $match[1];
 }
 
 ?>

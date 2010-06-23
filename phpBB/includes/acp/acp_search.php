@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_search
 {
+	var $tpl_name;
 	var $u_action;
 	var $state;
 	var $search;

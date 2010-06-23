@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_styles
 {
+	var $tpl_name;
 	var $u_action;
 
 	var $style_cfg;

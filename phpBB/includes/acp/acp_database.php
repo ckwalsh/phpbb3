@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_database
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)
@@ -474,6 +475,7 @@ class acp_database
 */
 class base_extractor
 {
+	var $tpl_name;
 	var $fh;
 	var $fp;
 	var $write;

@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_users
 {
+	var $tpl_name;
 	var $u_action;
 	var $p_master;
 

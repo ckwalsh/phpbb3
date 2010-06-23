@@ -23,6 +23,7 @@ if (!defined('IN_PHPBB'))
 */
 class ucp_resend
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)

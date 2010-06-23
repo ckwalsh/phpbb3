@@ -23,6 +23,7 @@ if (!defined('IN_PHPBB'))
 */
 class ucp_register
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)
@@ -219,7 +220,7 @@ class ucp_register
 			}
 
 			// Replace "error" strings with their real, localised form
-			$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+			$error = preg_replace_callback('#^([A-Z_]+)$#', 'ucp_register_preg_replace_lang_callback', $error);
 
 			if ($config['enable_confirm'])
 			{
@@ -504,6 +505,13 @@ class ucp_register
 		$this->tpl_name = 'ucp_register';
 		$this->page_title = 'UCP_REGISTRATION';
 	}
+}
+
+function ucp_register_preg_replace_lang_callback($match)
+{
+	global $user;
+
+	return (!empty($user->lang[$match[1]])) ? $user->lang[$match[1]] : $match[1];
 }
 
 ?>

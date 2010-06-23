@@ -31,6 +31,7 @@ if (!defined('IN_PHPBB'))
 */
 class ucp_confirm
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)

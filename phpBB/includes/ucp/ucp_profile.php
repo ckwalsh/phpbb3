@@ -25,6 +25,7 @@ if (!defined('IN_PHPBB'))
 */
 class ucp_profile
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)
@@ -241,7 +242,7 @@ class ucp_profile
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'ucp_profile_preg_replace_lang_callback', $error);
 				}
 
 				$template->assign_vars(array(
@@ -388,7 +389,7 @@ class ucp_profile
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'ucp_profile_preg_replace_lang_callback', $error);
 				}
 
 				if ($config['allow_birthdays'])
@@ -513,7 +514,7 @@ class ucp_profile
 					}
 
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'ucp_profile_preg_replace_lang_callback', $error);
 				}
 
 				$signature_preview = '';
@@ -584,7 +585,7 @@ class ucp_profile
 						$error[] = 'FORM_INVALID';
 					}
 					// Replace "error" strings with their real, localised form
-					$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+					$error = preg_replace_callback('#^([A-Z_]+)$#', 'ucp_profile_preg_replace_lang_callback', $error);
 				}
 
 				if (!$config['allow_avatar'] && $user->data['user_avatar_type'])
@@ -644,6 +645,13 @@ class ucp_profile
 		$this->tpl_name = 'ucp_profile_' . $mode;
 		$this->page_title = 'UCP_PROFILE_' . strtoupper($mode);
 	}
+}
+
+function ucp_profile_preg_replace_lang_callback($match)
+{
+	global $user;
+
+	return (!empty($user->lang[$match[1]])) ? $user->lang[$match[1]] : $match[1];
 }
 
 ?>

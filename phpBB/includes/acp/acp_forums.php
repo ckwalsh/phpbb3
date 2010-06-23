@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_forums
 {
+	var $tpl_name;
 	var $u_action;
 	var $parent_id = 0;
 

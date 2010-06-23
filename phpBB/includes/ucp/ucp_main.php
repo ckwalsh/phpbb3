@@ -23,6 +23,7 @@ if (!defined('IN_PHPBB'))
 */
 class ucp_main
 {
+	var $tpl_name;
 	var $p_master;
 	var $u_action;
 

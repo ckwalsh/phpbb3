@@ -23,6 +23,7 @@ include($phpbb_root_path . 'includes/questionnaire/questionnaire.' . $phpEx);
 */
 class acp_send_statistics
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)

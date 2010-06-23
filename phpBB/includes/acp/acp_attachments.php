@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_attachments
 {
+	var $tpl_name;
 	var $u_action;
 	var $new_config;
 

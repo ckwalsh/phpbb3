@@ -31,6 +31,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_modules
 {
+	var $tpl_name;
 	var $module_class = '';
 	var $parent_id;
 	var $u_action;

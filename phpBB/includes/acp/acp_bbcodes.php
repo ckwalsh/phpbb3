@@ -21,6 +21,7 @@ if (!defined('IN_PHPBB'))
 */
 class acp_bbcodes
 {
+	var $tpl_name;
 	var $u_action;
 
 	function main($id, $mode)
@@ -397,7 +398,8 @@ class acp_bbcodes
 				if (preg_match_all('/(?<!\\\\)\$([0-9]+)/', $replace, $repad))
 				{
 					$repad = $pad + sizeof(array_unique($repad[0]));
-					$replace = preg_replace('/(?<!\\\\)\$([0-9]+)/e', "'\${' . (\$1 + \$pad) . '}'", $replace);
+					acp_bbcode_preg_replace_pad_callback($pad);
+					$replace = preg_replace_callback('/(?<!\\\\)\$([0-9]+)/', 'acp_bbcode_preg_replace_pad_callback', $replace);
 					$pad = $repad;
 				}
 
@@ -458,10 +460,10 @@ class acp_bbcodes
 			trigger_error($user->lang['BBCODE_INVALID'] . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		$fp_match = preg_replace('#\[/?' . $bbcode_search . '#ie', "strtolower('\$0')", $fp_match);
-		$fp_replace = preg_replace('#\[/?' . $bbcode_search . '#ie', "strtolower('\$0')", $fp_replace);
-		$sp_match = preg_replace('#\[/?' . $bbcode_search . '#ie', "strtolower('\$0')", $sp_match);
-		$sp_replace = preg_replace('#\[/?' . $bbcode_search . '#ie', "strtolower('\$0')", $sp_replace);
+		$fp_match = preg_replace_callback('#\[/?' . $bbcode_search . '#i', 'acp_bbcode_preg_replace_strtolower_callback', $fp_match);
+		$fp_replace = preg_replace_callback('#\[/?' . $bbcode_search . '#i', 'acp_bbcode_preg_replace_strtolower_callback', $fp_replace);
+		$sp_match = preg_replace_callback('#\[/?' . $bbcode_search . '#i', 'acp_bbcode_preg_replace_strtolower_callback', $sp_match);
+		$sp_replace = preg_replace_callback('#\[/?' . $bbcode_search . '#i', 'acp_bbcode_preg_replace_strtolower_callback', $sp_replace);
 
 		return array(
 			'bbcode_tag'				=> $bbcode_tag,
@@ -471,6 +473,30 @@ class acp_bbcodes
 			'second_pass_replace'		=> $sp_replace
 		);
 	}
+}
+
+function acp_bbcode_preg_replace_pad_callback($match)
+{
+	static $pad = 0;
+
+	// This is kind of ugly, but the best way to get everything working well.
+	// Basically, we need the padding value in the callback, but a global would
+	// be ugly. Lets call this function with the padding value first and set the
+	// static variable here. If we are passed an array, we are truely being used
+	// as a callback.
+	if (is_int($match))
+	{
+		$pad = $match;
+	}
+	else
+	{
+		return '${' . ($match[1] + $pad) . '}';
+	}
+}
+
+function acp_bbcode_preg_replace_strtolower_callback($match)
+{
+	return strtolower($match[0]);
 }
 
 ?>
