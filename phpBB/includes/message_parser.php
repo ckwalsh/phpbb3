@@ -715,7 +715,7 @@ class bbcode_firstpass extends bbcode
 		}
 
 		// To let the parser not catch tokens within quote_username quotes we encode them before we start this...
-		$in = preg_replace('#quote=&quot;(.*?)&quot;\]#ie', "'quote=&quot;' . str_replace(array('[', ']', '\\\"'), array('&#91;', '&#93;', '\"'), '\$1') . '&quot;]'", $in);
+		$in = preg_replace_callback('#quote=&quot;(.*?)&quot;\]#i', array($this, 'escape_quote_tokens_callback'), $in);
 
 		$tok = ']';
 		$out = '[';
@@ -1416,7 +1416,7 @@ class parse_message extends bbcode_firstpass
 					);
 
 					$this->attachment_data = array_merge(array(0 => $new_entry), $this->attachment_data);
-					$this->message = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "'[attachment='.(\\1 + 1).']\\2[/attachment]'", $this->message);
+					$this->message = preg_replace_callback('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#', array($this, 'increment_attachment_id_callback'), $this->message);
 
 					$this->filename_data['filecomment'] = '';
 
@@ -1479,7 +1479,8 @@ class parse_message extends bbcode_firstpass
 					}
 
 					unset($this->attachment_data[$index]);
-					$this->message = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')", $this->message);
+					$this->_tmp_attachment_index = $index;
+					$this->message = preg_replace_callback('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#', array($this, 'decrement_attachment_id_callback'), $this->message);
 
 					// Reindex Array
 					$this->attachment_data = array_values($this->attachment_data);
@@ -1518,7 +1519,7 @@ class parse_message extends bbcode_firstpass
 						);
 
 						$this->attachment_data = array_merge(array(0 => $new_entry), $this->attachment_data);
-						$this->message = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "'[attachment='.(\\1 + 1).']\\2[/attachment]'", $this->message);
+						$this->message = preg_replace_callback('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#', array($this, 'increment_attachment_id_callback'), $this->message);
 						$this->filename_data['filecomment'] = '';
 					}
 				}
@@ -1685,5 +1686,40 @@ class parse_message extends bbcode_firstpass
 		}
 
 		$poll['poll_max_options'] = ($poll['poll_max_options'] < 1) ? 1 : (($poll['poll_max_options'] > $config['max_poll_options']) ? $config['max_poll_options'] : $poll['poll_max_options']);
+	}
+
+	/*
+	* Callback for escaping tokens in quote usernames for bbcode_quote
+	*/
+	function escape_quote_tokens_callback($match)
+	{
+		return 'quote=&quot;' . str_replace(array('[', ']', '\"'), array('&#91;', '&#93;', '"'), $match[1]) . '&quot;]';
+	}
+
+	/*
+	* Callback for incrementing attachment ids for parse_attachment
+	*/
+	function increment_attachment_id_callback($match)
+	{
+		return '[attachment='.($match[1] + 1).']' . $match[2] . '[/attachment]';
+	}
+
+	/*
+	* Callback for decrementing attachment ids for parse_attachment
+	*/
+	function decrement_attachment_id_callback($match)
+	{
+		if ($match[1] == $this->_tmp_attachment_index)
+		{
+			return '';
+		}
+		else if ($match[1] > $this->_tmp_attachment_index)
+		{
+			return '[attachment=' . ($match[1] - 1) . ']' . $match[2] . '[/attachment]';
+		}
+		else
+		{
+			return $match[0];
+		}
 	}
 }
